@@ -1,0 +1,375 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f2f6fb;
+  color: #1f2937;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at top left, rgba(81, 121, 255, 0.15), transparent 30%),
+    linear-gradient(180deg, #f8fbff 0%, #eef4fc 100%);
+}
+
+button, input, textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app-shell {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+}
+
+.app-header {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #4f46e5;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 2.5vw, 3rem);
+}
+
+.subtitle {
+  margin: 14px auto 0;
+  max-width: 760px;
+  color: #4b5563;
+}
+
+.composer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+}
+
+.composer-sidebar {
+  display: grid;
+  gap: 20px;
+}
+
+.composer-card {
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 24px 60px rgba(16, 24, 40, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  padding: 24px;
+}
+
+.editor-card textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 18px;
+  padding: 18px;
+  resize: vertical;
+  min-height: 210px;
+  color: #111827;
+  background: #f8fafc;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.editor-card textarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.editor-header h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.counter-panel {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 18px 20px;
+  background: #f8fafc;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+}
+
+.counter-status {
+  font-weight: 600;
+}
+
+.counter-status.ready {
+  color: #16a34a;
+}
+
+.counter-status.warning {
+  color: #d97706;
+}
+
+.counter-status.error {
+  color: #dc2626;
+}
+
+.platform-card h2,
+.media-card h2,
+.validation-card h2 {
+  margin: 0 0 16px;
+  font-size: 1.2rem;
+}
+
+.platform-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.platform-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.platform-option:hover {
+  transform: translateY(-1px);
+  border-color: #4f46e5;
+}
+
+.platform-option input {
+  width: 18px;
+  height: 18px;
+}
+
+.platform-label {
+  font-weight: 600;
+}
+
+.upload-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: none;
+  background: linear-gradient(135deg, #4338ca, #6366f1);
+  color: #fff;
+  font-weight: 600;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.upload-button:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+.upload-button input {
+  display: none;
+}
+
+.media-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.hint {
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+.media-preview-card {
+  margin-top: 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.preview-media {
+  width: 100%;
+  max-height: 260px;
+  border-radius: 18px;
+  object-fit: cover;
+  background: #111827;
+}
+
+.media-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.text-button {
+  background: transparent;
+  border: none;
+  color: #4338ca;
+  font-weight: 700;
+  padding: 0;
+}
+
+.text-button:hover {
+  text-decoration: underline;
+}
+
+.validation-list {
+  display: grid;
+  gap: 14px;
+}
+
+.validation-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid transparent;
+  background: #f8fafc;
+}
+
+.validation-row.status-ready {
+  border-color: #a7f3d0;
+}
+
+.validation-row.status-warning {
+  border-color: #fde68a;
+}
+
+.validation-row.status-error {
+  border-color: #fecaca;
+}
+
+.validation-icon {
+  font-size: 1.4rem;
+}
+
+.validation-row p {
+  margin: 4px 0 0;
+  color: #475569;
+}
+
+.muted {
+  color: #6b7280;
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.primary-button,
+.secondary-button {
+  border: none;
+  border-radius: 18px;
+  padding: 14px 22px;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-button {
+  background: #4338ca;
+  color: #fff;
+}
+
+.primary-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.secondary-button {
+  background: #eef2ff;
+  color: #3730a3;
+}
+
+.primary-button:hover:not(:disabled),
+.secondary-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 40px rgba(67, 56, 202, 0.16);
+}
+
+.toast {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  font-weight: 600;
+}
+
+.toast.success {
+  background: #ecfdf5;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.toast.error {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+@media (max-width: 1024px) {
+  .composer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    padding: 20px 16px 32px;
+  }
+
+  .platform-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-row {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 540px) {
+  .composer-card {
+    padding: 20px;
+  }
+
+  .editor-card textarea {
+    min-height: 180px;
+  }
+}
