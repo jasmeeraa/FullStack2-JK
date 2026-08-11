@@ -1,17 +1,23 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-
-const API_URL = 'http://localhost:5000/api/auth';
+import { findUserByEmail, registerUser } from '../utils/userStorage';
 
 export default function Register() {
   const navigate = useNavigate();
-  const { login } = useAuth();
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const { isAuthenticated, currentUser, register } = useAuth();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+
+  if (isAuthenticated && currentUser) {
+    return <Navigate to={currentUser.role === 'admin' ? '/admin' : '/dashboard'} replace />;
+  }
 
   const handleChange = (event) => {
     setFormData({
@@ -20,13 +26,19 @@ export default function Register() {
     });
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     setError('');
     setSuccess('');
 
-    if (!formData.name.trim() || !formData.email.trim() || !formData.password.trim()) {
+    if (!formData.name.trim() || !formData.email.trim() || !formData.password.trim() || !formData.confirmPassword.trim()) {
       setError('All fields are required.');
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+      setError('Please enter a valid email address.');
       return;
     }
 
@@ -35,28 +47,38 @@ export default function Register() {
       return;
     }
 
-    try {
-      setIsLoading(true);
-      const response = await axios.post(`${API_URL}/register`, formData);
-      setSuccess(response.data.message);
-
-      // Automatically log in after successful registration for a simple flow.
-      // Real-world apps may redirect to login instead.
-      setTimeout(() => {
-        navigate('/login');
-      }, 900);
-    } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed.');
-    } finally {
-      setIsLoading(false);
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match.');
+      return;
     }
+
+    if (findUserByEmail(formData.email)) {
+      setError('A user with this email already exists.');
+      return;
+    }
+
+    const newUser = {
+      id: crypto.randomUUID(),
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      password: formData.password,
+      role: 'user',
+      createdAt: new Date().toISOString(),
+    };
+
+    register(newUser);
+    setSuccess('Registration successful. Redirecting to login...');
+
+    setTimeout(() => {
+      navigate('/login');
+    }, 800);
   };
 
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <h1>Create Account</h1>
-        <p className="subtitle">Join with your details</p>
+        <h1>Register as User</h1>
+        <p className="subtitle">Create a student account for this JWT experiment.</p>
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
@@ -67,7 +89,7 @@ export default function Register() {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Enter your full name"
+              placeholder="Enter your name"
             />
           </div>
 
@@ -95,12 +117,22 @@ export default function Register() {
             />
           </div>
 
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="Confirm your password"
+            />
+          </div>
+
           {error && <div className="message error">{error}</div>}
           {success && <div className="message success">{success}</div>}
 
-          <button type="submit" disabled={isLoading} className="primary-btn">
-            {isLoading ? 'Registering...' : 'Register'}
-          </button>
+          <button type="submit" className="primary-btn">Register</button>
         </form>
 
         <p className="switch-text">

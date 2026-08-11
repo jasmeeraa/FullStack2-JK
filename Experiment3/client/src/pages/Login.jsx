@@ -1,16 +1,24 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-
-const API_URL = 'http://localhost:5000/api/auth';
+import { generateToken } from '../utils/jwt';
+import { findUserByEmail } from '../utils/userStorage';
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated, currentUser } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+
+  if (isAuthenticated && currentUser) {
+    if (currentUser.role === 'admin') {
+      return <Navigate to="/admin" replace />;
+    }
+    if (currentUser.role === 'editor') {
+      return <Navigate to="/editor-dashboard" replace />;
+    }
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const handleChange = (event) => {
     setFormData({
@@ -19,7 +27,7 @@ export default function Login() {
     });
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     setError('');
 
@@ -28,26 +36,49 @@ export default function Login() {
       return;
     }
 
-    try {
-      setIsLoading(true);
-      const response = await axios.post(`${API_URL}/login`, formData);
+    const storedUser = findUserByEmail(formData.email);
 
-      // For this educational experiment, JWT is stored in sessionStorage.
-      // In production, HttpOnly cookies are preferred to reduce XSS risk.
-      login(response.data.user, response.data.token);
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
-    } finally {
-      setIsLoading(false);
+    if (!storedUser || storedUser.password !== formData.password) {
+      setError('Invalid email or password.');
+      return;
     }
+
+    if (storedUser.role === 'admin') {
+      setError('Use the Admin Login page for administrator access.');
+      return;
+    }
+
+    const authToken = generateToken({
+      userId: storedUser.id,
+      name: storedUser.name,
+      email: storedUser.email,
+      role: storedUser.role,
+    });
+
+    login(
+      {
+        id: storedUser.id,
+        userId: storedUser.id,
+        name: storedUser.name,
+        email: storedUser.email,
+        role: storedUser.role,
+      },
+      authToken
+    );
+
+    if (storedUser.role === 'editor') {
+      navigate('/editor-dashboard');
+      return;
+    }
+
+    navigate('/dashboard');
   };
 
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <h1>Welcome Back</h1>
-        <p className="subtitle">Sign in to continue</p>
+        <h1>User Login</h1>
+        <p className="subtitle">Sign in to continue to your dashboard.</p>
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
@@ -76,13 +107,11 @@ export default function Login() {
 
           {error && <div className="message error">{error}</div>}
 
-          <button type="submit" disabled={isLoading} className="primary-btn">
-            {isLoading ? 'Logging in...' : 'Login'}
-          </button>
+          <button type="submit" className="primary-btn">Login</button>
         </form>
 
         <p className="switch-text">
-          Don’t have an account? <Link to="/register">Register here</Link>
+          New user? <Link to="/register">Register here</Link>
         </p>
       </div>
     </div>

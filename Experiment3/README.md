@@ -1,191 +1,191 @@
-# Secure Authentication System Using JSON Web Tokens (JWT)
+# JWT Authentication and Role-Based Authorization System
 
 ## Aim
-To design and implement a secure authentication system using JWT for user login and session management in a beginner-friendly full-stack web application.
+To design and implement a simple frontend-only JWT authentication demo that explains user login, editor credential management, admin control, token storage, and role-based authorization for a college viva.
 
 ## Objectives
-1. Understand authentication mechanisms in web applications.
-2. Implement token-based authentication using JWT.
-3. Manage user sessions using a stateless architecture.
-4. Handle token storage and validation securely.
+- Understand JWT concepts and structure
+- Simulate JWT generation and decoding on the frontend
+- Show how roles affect access to protected pages
+- Demonstrate user registration and login
+- Demonstrate editor-based user credential editing
+- Demonstrate admin user management
+- Explain the difference between a demo and a production-secure system
 
-## Technologies Used
-- Frontend: React.js + Vite
-- Backend: Node.js + Express.js
-- Authentication: JSON Web Token (JWT)
-- Password hashing: bcrypt
-- HTTP client: Axios
-- Styling: CSS
-- Language: JavaScript
+## Theory
+A JSON Web Token has three main sections:
 
-## JWT Theory
-A JSON Web Token (JWT) is a compact, URL-safe token used to securely transmit information between parties. It contains a header, payload, and signature. JWTs are commonly used for authentication because the server can verify the token without keeping a server-side session for each user.
+1. Header
+2. Payload
+3. Signature
 
-### JWT Structure
-A JWT looks like this:
+The payload contains claims such as userId, name, email, role, and expiration time. In a real application, a trusted backend server signs and verifies the token. In this project, the token is simulated in the browser for educational purposes only.
 
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMjMiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwibmFtZSI6IkFkbWluIn0.signature
+A real JWT must be securely signed and verified by a trusted backend server. This project demonstrates JWT concepts and role-based authorization for educational purposes.
 
-#### Header
-The header includes the token type and signing algorithm, typically:
+## JWT Structure
+```text
+Header.Payload.Signature
+```
 
+Example payload:
+```json
 {
-  "alg": "HS256",
-  "typ": "JWT"
+  "userId": 1,
+  "name": "Administrator",
+  "email": "admin@example.com",
+  "role": "admin",
+  "exp": 1730000000
 }
+```
 
-#### Payload
-The payload contains user data such as userId, email, and name. It is encoded and not encrypted unless you use additional measures.
-
-#### Signature
-The signature is created by hashing the header + payload with the secret key. This allows the server to verify that the token was not modified.
+Passwords are never stored inside the JWT payload.
 
 ## Authentication Flow
-1. User registers by providing name, email, and password.
-2. Server hashes the password with bcrypt before storing it.
-3. User logs in with email and password.
-4. Server checks the password and generates a JWT.
-5. JWT is sent to the client and stored in sessionStorage for this lab.
-6. Client sends JWT in the Authorization header for protected routes.
-7. Server verifies the token using the JWT secret.
-8. If valid, the protected route returns user information.
+Login
+↓
+JWT generated
+↓
+Token stored in sessionStorage
+↓
+Token decoded and validated
+↓
+Role identified
+↓
+Access granted according to permissions
+
+## Role Hierarchy
+ADMIN
+↓
+EDITOR
+↓
+USER
+
+## User Permissions
+A User can:
+- register
+- log in through the User Login page
+- view their own dashboard
+- view their own account details
+- logout
+
+A User cannot:
+- access the Admin Dashboard
+- access the Editor Dashboard
+- manage other users
+- edit other user information
+- delete users
+
+## Editor Permissions
+An Editor is responsible for editing user credentials details.
+
+An Editor can:
+- log in through the normal login page
+- view the Editor Dashboard
+- view normal users
+- edit normal user details such as name, email, and password
+- save updates
+- logout
+
+An Editor cannot:
+- access the Admin Dashboard
+- edit Admin accounts
+- edit other Editors
+- change roles
+- delete Admin accounts
+- create or manage Admins
+
+## Admin Permissions
+An Admin can:
+- log in through the separate Admin Login page
+- access the Admin Dashboard
+- view all users, editors, and admins
+- edit user or editor details
+- create new editors
+- delete normal users
+- manage all user roles where appropriate
+- logout
+
+An Admin cannot be deleted by an Editor.
 
 ## Project Structure
 ```text
-jwt-auth-experiment/
+Experiment3/
 ├── client/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── ProtectedRoute.jsx
-│   │   │   └── Navbar.jsx
+│   │   │   ├── Navbar.jsx
+│   │   │   └── ProtectedRoute.jsx
 │   │   ├── context/
 │   │   │   └── AuthContext.jsx
 │   │   ├── pages/
+│   │   │   ├── HomePage.jsx
 │   │   │   ├── Login.jsx
+│   │   │   ├── AdminLogin.jsx
 │   │   │   ├── Register.jsx
-│   │   │   └── Dashboard.jsx
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── EditorDashboard.jsx
+│   │   │   └── AdminDashboard.jsx
+│   │   ├── utils/
+│   │   │   ├── jwt.js
+│   │   │   └── userStorage.js
 │   │   ├── App.jsx
 │   │   ├── main.jsx
 │   │   └── index.css
 │   ├── package.json
 │   ├── vite.config.js
 │   └── index.html
-├── server/
-│   ├── middleware/
-│   │   └── authenticateToken.js
-│   ├── routes/
-│   │   └── auth.js
-│   ├── .env
-│   ├── package.json
-│   └── server.js
 ├── README.md
 └── .gitignore
 ```
 
 ## Installation
-From the project root, run:
-
 ```bash
-cd jwt-auth-experiment/server
-npm install
-
-cd ../client
+cd Experiment3/client
 npm install
 ```
 
-## Start the Backend
+## How to run
 ```bash
-cd jwt-auth-experiment/server
+cd Experiment3/client
 npm run dev
 ```
 
-The server runs at:
+## Default Accounts
+Admin:
+- Email: admin@example.com
+- Password: admin123
 
-http://localhost:5000
+Editor:
+- Email: editor@example.com
+- Password: editor123
 
-## Start the Frontend
-```bash
-cd jwt-auth-experiment/client
-npm run dev
-```
+Normal users can be registered from the Register page.
 
-The frontend runs at:
+## Role-Based Access Rules
+- User cannot access Admin Dashboard
+- User cannot access Editor Dashboard
+- Editor cannot access Admin Dashboard
+- Editor can edit only users with role = user
+- Editor cannot edit an Admin or another Editor
+- Only Admin can create Editors
+- Only Admin can manage all users
+- Logout clears the JWT and redirects to login
 
-http://localhost:5173
+## Frontend-Only Security Note
+This is a frontend-only educational implementation. A real authentication system should perform JWT signing, verification, password hashing, and authorization on a secure backend.
 
-## API Endpoints
-### Register user
-- POST /api/auth/register
+## Viva Explanation
+The application works as follows:
 
-Request body:
-```json
-{
-  "name": "Alice",
-  "email": "alice@example.com",
-  "password": "securepass123"
-}
-```
+1. User or editor logs in from the main login page.
+2. Admin logs in from the separate Admin Login page.
+3. A JWT is generated on the frontend.
+4. The token is stored in sessionStorage.
+5. The app decodes the token to restore the current user.
+6. Protected routes check the user role before allowing access.
+7. Unauthorized users are redirected to their proper dashboard or login page.
+8. Logout removes the token and clears the current user from state.
 
-### Login user
-- POST /api/auth/login
-
-Request body:
-```json
-{
-  "email": "alice@example.com",
-  "password": "securepass123"
-}
-```
-
-### Get authenticated user
-- GET /api/auth/me
-
-Requires:
-```http
-Authorization: Bearer <token>
-```
-
-## How JWT is Stored and Sent
-For this educational experiment, the JWT is stored in sessionStorage on the browser.
-
-```js
-sessionStorage.setItem('jwtToken', token);
-```
-
-When the frontend calls a protected route, it sends the token in the Authorization header:
-
-```js
-headers: {
-  Authorization: `Bearer ${token}`,
-}
-```
-
-> Security note: In production, HttpOnly secure cookies are preferred over sessionStorage to reduce exposure to JavaScript-based attacks like XSS.
-
-## How Protected Routes Work
-The server contains a middleware named authenticateToken. It:
-- Reads the Authorization header.
-- Extracts the Bearer token.
-- Verifies the JWT using the secret key.
-- Rejects missing/expired/invalid tokens with HTTP 401.
-- Attaches decoded user information to req.user.
-
-## Security Considerations
-- JWT secret is stored in a .env file and is never hard-coded.
-- Passwords are never stored in plain text; bcrypt hashes them.
-- Duplicate email addresses are prevented.
-- Input validation is applied to all forms.
-- Expired tokens are rejected with 401 status.
-- Only required user information is returned in API responses.
-- CORS is enabled for the React frontend.
-
-## Expected Outcome
-After completing the experiment, the student should be able to:
-- Register and log in users.
-- Generate and validate JWT tokens.
-- Store tokens safely in the browser for a lab environment.
-- Protect API routes using middleware.
-- Understand how stateless authentication works in a real web application.
-
-## How this experiment satisfies the Aim and Objectives
-This project demonstrates the main ideas behind JWT-based authentication in a practical and beginner-friendly way. It includes a secure registration endpoint, password hashing with bcrypt, JWT generation on login, protected route middleware, session management, and frontend route protection. The result is a full-stack experiment that explains how stateless authentication works in modern web applications.
+## Important Note
+This experiment is meant to teach the concept of JWT-based authentication and role-based authorization in a simple way. It is not a production-ready authentication system and should not be treated as secure deployment code.
